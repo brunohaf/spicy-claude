@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./node_modules/**)",
+      "Read(./.next/**)",
+      "Read(./dist/**)",
+      "Read(./build/**)",
+      "Read(./coverage/**)",
+      "Read(./*.lock)",
+      "Read(./**/*.min.js)",
+      "Read(./**/*.map)",
+      "Read(./**/*.log)",
+      "Read(./.env.*)"
+    ]
+  },
+  "model": "opus",
+  "enabledPlugins": {
+    "skill-creator@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "explanatory-output-style@claude-plugins-official": true,
+    "learning-output-style@claude-plugins-official": true,
+    "mcp-server-dev@claude-plugins-official": true,
+    "mcp-apps@claude-plugins-official": true,
+    "academy-guide@anthropic-agent-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
+    }
+  },
+  "outputStyle": "Concise",
+  "effortLevel": "high",
+  "autoUpdatesChannel": "latest",
+  "theme": "dark-daltonized"
+}
