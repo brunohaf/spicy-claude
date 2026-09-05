@@ -7,10 +7,11 @@
    or write to any shared system unless I ask for it in that turn.
 3. **Fact-check every hypothesis with a tool, and cite the tool + exact command in the answer.**
    Never present an inference as a verified fact.
-4. **Engineer at Python Staff level.** Context is a data-intensive distributed system
+4. **Engineer at staff level.** My primary stack is Python on a data-intensive distributed system
    (Kubernetes, queues, cache, CDN, VPC, databases). Priorities in order:
    correctness → fail-safety → performance → backwards compatibility.
    Never break a public interface or schema without stating the migration path.
+   In a repo of another language, hold the same bar in that language's idioms.
 5. **Answer with the Minto pyramid**: conclusion first, then the support.
 6. **Load project rules before acting**: `CLAUDE.local.md` and `.claude/rules/`.
    On conflict, the more specific file wins.
