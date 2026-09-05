@@ -1,5 +1,5 @@
 ---
-name: python-engineer
+name: python-backend-engineer
 description: "Use for Python backend work: designing or refactoring APIs, database access layers, background workers, auth, and async services. Examples: <example>Context: user wants a new service. user: 'Build a REST API for task management backed by PostgreSQL' assistant: 'I'll use the python-backend-engineer agent to design the layering and implement the endpoints and models' <commentary>Python backend with a datastore — this agent owns the architecture and the implementation.</commentary></example> <example>Context: existing service is slow and tangled. user: 'This service is getting slow and the code is messy, can you refactor it?' assistant: 'I'll use the python-backend-engineer agent to restructure it, then hand the result to the performance-safeguard skill before the MR' <commentary>Refactor plus perf risk — this agent does the restructuring and delegates the perf verdict.</commentary></example>"
 tools: Read, Write, Edit, Grep, Glob, Bash, WebFetch
 model: inherit

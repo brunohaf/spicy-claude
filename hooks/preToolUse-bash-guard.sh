@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ~/.claude/hooks/preToolUse-bash-guard.sh
+# hooks/preToolUse-bash-guard.sh - resolved via $CLAUDE_CONFIG_DIR, default ~/.claude
 # Reads the proposed tool invocation as JSON on stdin.
 
 set -euo pipefail

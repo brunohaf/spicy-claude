@@ -1,11 +1,16 @@
 # spicy-claude
 
+<p align="center">
+  <img src="assets/spicy-claude-logo.png"
+       alt="spicy-claude logo: a chilli pepper in sunglasses running Claude Code, mug of Spicy Code Fuel in hand"
+       width="220">
+</p>
+
 My spicy-[claude](https://claude.com/claude-code) user configuration — the authored
 parts of `~/.claude`, without the session data, caches or credentials.
 
 Tuned for a Python / GKE / GitLab / Jira stack. If you fork it, the two places to
-swap are the CLI names in rule 1 of `CLAUDE.md` and the Makefile targets in its
-Development Workflow.
+swap are the CLI names in rule 1 of `CLAUDE.md` and any relevant Makefile targets in its Development Workflow.
 
 ## Layout
 
@@ -14,8 +19,11 @@ Development Workflow.
 | `CLAUDE.md` | Global instructions loaded into every session, in every project |
 | `settings.json` | Permissions, model, enabled plugins, marketplaces, theme. Inspired [hidekazu-konisi's article](https://hidekazu-konishi.com/entry/claude_code_harness_and_environment_engineering_guide.html)|
 | `agents/` | Authored and vendored [subagents](https://code.claude.com/docs/en/sub-agents) |
+| `hooks/` | Shell hooks wired up by `settings.json` - a Bash guard and a tool-use audit log |
 | `rules/` | Task-scoped rules, loaded on demand rather than every turn |
 | `skills/` | Authored [Agent Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills) |
+| `assets/` | Repository artwork referenced by this README |
+| `commands/`, `output-styles/` | Reserved. Empty today, but pre-named in `.gitignore` so the first file added is tracked rather than silently ignored |
 
 ### `CLAUDE.md`
 
@@ -53,34 +61,11 @@ not the path — unlike `skills/`, which is pinned to exactly
 `skills/<name>/SKILL.md`, one level deep. So agents can be foldered freely;
 skills cannot.
 
-- **`python-backend-engineer`** — Python backend work: APIs, data access layers,
-  workers, auth, async services. Adapted from
-  [hesreallyhim/a-list-of-claude-code-agents](https://github.com/hesreallyhim/a-list-of-claude-code-agents/blob/main/agents/python-backend-engineer.md).
+- **`python-backend-engineer`** (`agents/python-backend-engineer.md`) — Python
+  backend work: APIs, data access layers, workers, auth, async services. Adapted from [hesreallyhim/a-list-of-claude-code-agents](https://github.com/hesreallyhim/a-list-of-claude-code-agents/blob/main/agents/python-backend-engineer.md) — the prose, structure and
+  worked examples of that agent are the starting point for this one, and the name is kept as upstream's so the lineage stays obvious.
   Changes from upstream: the `CLAUDE.md` priority order
-  (correctness → fail-safety → performance → backwards compatibility) and its
-  migration-path rule; verification deferred to the repo's Makefile or README
-  instead of a hardcoded `black`/`isort` invocation; flag-don't-fix for unrelated
-  bugs; an explicit `tools` allowlist and `model: inherit` where upstream
-  inherits every tool by default; and perf sign-off delegated to the
-  `performance-safeguard` skill rather than duplicated.
-
-#### Why these are vendored, not submodules
-
-A submodule earns its keep when upstream is versioned, licensed, and a
-whole-directory drop-in you never edit. The agents source above is none of
-those — no `LICENSE`, no tags, no releases, four loose community Markdown
-files — so a submodule would pin a SHA with nothing to track, drag in three
-agents that aren't wanted, and still need a fork before a single line could be
-changed to match this repo's rules.
-
-The cost lands on installation, too. Both install methods below would grow
-a `git submodule update --init` step, and skipping it fails *silently*: the
-directory is simply empty and the agent never appears.
-
-Vendoring instead keeps the adaptation in one commit and makes drift visible in
-`git log`, with upstream attribution recorded above. Revisit if a source ever
-ships tagged releases and a license — at which point a marketplace plugin
-(`/plugin marketplace add`) is a better mechanism than a submodule anyway.
+  (correctness → fail-safety → performance → backwards compatibility) and its migration-path rule; verification deferred to the repo's Makefile or README instead of a hardcoded `black`/`isort` invocation; flag-don't-fix for unrelated bugs; an explicit `tools` allowlist and `model: inherit` where upstream inherits every tool by default; and perf sign-off delegated to the `performance-safeguard` skill rather than duplicated.
 
 ## Install
 
@@ -96,7 +81,7 @@ The repo *is* `~/.claude`, so initialise rather than cloning over it:
 cd ~/.claude
 git init
 git remote add origin <your-remote>
-git add -A          # .gitignore is an allowlist; check what got staged
+git add -A
 git status
 ```
 
@@ -114,6 +99,11 @@ export CLAUDE_CONFIG_DIR="$HOME/src/claude-config"    # ~/.bashrc, ~/.zshrc
 ```powershell
 [Environment]::SetEnvironmentVariable('CLAUDE_CONFIG_DIR', 'E:\src\claude-config', 'User')
 ```
+
+Hook commands in `settings.json` are written as
+`"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/..."` so they follow the clone instead
+of pointing at a `~/.claude` that may no longer hold them - a hardcoded path fails
+*silently* here, the same way a missing submodule would.
 
 Verify with `/context` in a new session: `CLAUDE.md` should appear under **Memory
 files**. One caveat — the relocation is total, so a machine that already had a

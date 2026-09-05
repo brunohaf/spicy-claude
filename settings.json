@@ -58,7 +58,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/preToolUse-bash-guard.sh"
+            "command": "\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/preToolUse-bash-guard.sh\""
           }
         ]
       }
@@ -69,15 +69,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/postToolUse-audit.sh"
+            "command": "\"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/postToolUse-audit.sh\""
           }
         ]
       }
-    ],
-    "outputStyle": "Concise",
-    "effortLevel": "high",
-    "autoUpdatesChannel": "latest",
-    "theme": "dark-daltonized",
-    "cleanupPeriodDays": 14
-  }
+    ]
+  },
+  "outputStyle": "Concise",
+  "effortLevel": "high",
+  "autoUpdatesChannel": "latest",
+  "theme": "dark-daltonized",
+  "cleanupPeriodDays": 14
 }

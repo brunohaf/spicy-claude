@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ~/.claude/hooks/postToolUse-audit.sh
+# hooks/postToolUse-audit.sh - resolved via $CLAUDE_CONFIG_DIR, default ~/.claude
 set -euo pipefail
 
 LOG_DIR="${CLAUDE_AUDIT_DIR:-$HOME/.claude/audit}"
