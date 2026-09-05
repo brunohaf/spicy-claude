@@ -1,6 +1,6 @@
-# claude-config
+# spicy-claude
 
-My [Claude Code](https://claude.com/claude-code) user configuration — the authored
+My spicy-[claude](https://claude.com/claude-code) user configuration — the authored
 parts of `~/.claude`, without the session data, caches or credentials.
 
 Tuned for a Python / GKE / GitLab / Jira stack. If you fork it, the two places to
@@ -12,7 +12,7 @@ Development Workflow.
 | Path | What it is |
 |---|---|
 | `CLAUDE.md` | Global instructions loaded into every session, in every project |
-| `settings.json` | Permissions, model, enabled plugins, marketplaces, theme |
+| `settings.json` | Permissions, model, enabled plugins, marketplaces, theme. Inspired [hidekazu-konisi's article](https://hidekazu-konishi.com/entry/claude_code_harness_and_environment_engineering_guide.html)|
 | `agents/` | Authored and vendored [subagents](https://code.claude.com/docs/en/sub-agents) |
 | `rules/` | Task-scoped rules, loaded on demand rather than every turn |
 | `skills/` | Authored [Agent Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills) |
@@ -134,3 +134,18 @@ future Claude Code release adds is ignored until it is named. Verify before a fi
 ```bash
 git add -A && git status --porcelain -uall
 ```
+
+## References
+
+- [Beyond the Prompt: Claude Code](https://arps18.github.io/posts/claude-code-mastery/) by Arpan Patel
+- [Claude Code Harness and Environment Engineering: Designing the Frontline Where Local AI Agents Actually Live](https://hidekazu-konishi.com/entry/claude_code_harness_and_environment_engineering_guide.html)
+- [Writing a good CLAUDE.md](https://www.humanlayer.dev/blog/writing-a-good-claude-md) by Kyle @ humanlayer
+- [Awesome Claude Code](https://github.com/hesreallyhim/awesome-claude-code) and [A List of Claude-Code Agents](https://github.com/hesreallyhim/a-list-of-claude-code-agents) by hesreallyhim
+- [Learn Claude Code](https://github.com/shareAI-lab/learn-claude-code) by shareAI-lab
+- [Mattpocock's Skills](https://github.com/mattpocock/skills) by mattpocock
+- [Andrej Karpathy's Skills](https://github.com/multica-ai/andrej-karpathy-skills) by multica-ai
+- [Cloude Skills](https://github.com/Jeffallan/claude-skills) by Jeffallan
+- [Claude Development Skills](https://github.com/VelimirMueller/claude_development_skills) by VelimirMueller
+- [Awesome Claude Code Subagents](https://github.com/VoltAgent/awesome-claude-code-subagents) by VoltAgent
+- [Context Engineering Kit](https://github.com/NeoLabHQ/context-engineering-kit) by NeoLabHQ
+- [Claudelog](https://claudelog.com/)
