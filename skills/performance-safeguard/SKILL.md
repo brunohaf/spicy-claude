@@ -1,7 +1,7 @@
 ---
 name: performance-safeguard
 description: Self-review of your own branch changes for performance and scalability risks, before opening a merge request. Use when the user wants a perf check before they open an MR or PR, commit or push; asks whether their change will scale or hold up under load; or raises N+1 queries, unbounded queries, missing indexes, memory leaks, OOM, goroutine or connection leaks, CPU hot paths, blocking calls in async code, lock contention, long transactions, cache stampedes, retry storms, missing timeouts, queue backpressure, fan-out, hot partitions, or pod restarts and HPA thrash. Built for distributed Kubernetes/GKE services with databases, caches and queues, shipped via ArgoCD and observed with New Relic and Sentry. Reviews committed, staged and untracked work together, proves or refutes each candidate against per-pod budgets, and returns suggested diffs with checks the developer can run locally. Not for security, style or test-coverage review; never edits code.
-license: Proprietary. Internal use.
+license: MIT
 ---
 
 # Performance Safeguard

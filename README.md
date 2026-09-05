@@ -16,14 +16,14 @@ swap are the CLI names in rule 1 of `CLAUDE.md` and any relevant Makefile target
 
 | Path | What it is |
 |---|---|
+| `LICENSE` | MIT |
 | `CLAUDE.md` | Global instructions loaded into every session, in every project |
 | `settings.json` | Permissions, model, enabled plugins, marketplaces, theme. Inspired [hidekazu-konisi's article](https://hidekazu-konishi.com/entry/claude_code_harness_and_environment_engineering_guide.html)|
-| `agents/` | Authored and vendored [subagents](https://code.claude.com/docs/en/sub-agents) |
 | `hooks/` | Shell hooks wired up by `settings.json` - a Bash guard and a tool-use audit log |
 | `rules/` | Task-scoped rules, loaded on demand rather than every turn |
 | `skills/` | Authored [Agent Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills) |
 | `assets/` | Repository artwork referenced by this README |
-| `commands/`, `output-styles/` | Reserved. Empty today, but pre-named in `.gitignore` so the first file added is tracked rather than silently ignored |
+| `agents/`, `commands/`, `output-styles/` | Reserved. Empty today, but pre-named in `.gitignore` so the first file added is tracked rather than silently ignored |
 
 ### `CLAUDE.md`
 
@@ -61,11 +61,9 @@ not the path — unlike `skills/`, which is pinned to exactly
 `skills/<name>/SKILL.md`, one level deep. So agents can be foldered freely;
 skills cannot.
 
-- **`python-backend-engineer`** (`agents/python-backend-engineer.md`) — Python
-  backend work: APIs, data access layers, workers, auth, async services. Adapted from [hesreallyhim/a-list-of-claude-code-agents](https://github.com/hesreallyhim/a-list-of-claude-code-agents/blob/main/agents/python-backend-engineer.md) — the prose, structure and
-  worked examples of that agent are the starting point for this one, and the name is kept as upstream's so the lineage stays obvious.
-  Changes from upstream: the `CLAUDE.md` priority order
-  (correctness → fail-safety → performance → backwards compatibility) and its migration-path rule; verification deferred to the repo's Makefile or README instead of a hardcoded `black`/`isort` invocation; flag-don't-fix for unrelated bugs; an explicit `tools` allowlist and `model: inherit` where upstream inherits every tool by default; and perf sign-off delegated to the `performance-safeguard` skill rather than duplicated.
+The directory ships empty. It is pre-named in `.gitignore` so the first agent
+added is tracked rather than silently ignored. Anything vendored in here needs a
+licence upstream that permits redistribution — see **License** below.
 
 ## Install
 
@@ -124,6 +122,18 @@ future Claude Code release adds is ignored until it is named. Verify before a fi
 ```bash
 git add -A && git status --porcelain -uall
 ```
+
+## License
+
+[MIT](LICENSE). The repository carries only authored content — instructions, hooks,
+skills and settings written here.
+
+Third-party material is deliberately *not* vendored. The projects under
+**References** are credited as influences and reading, not redistributed: a prompt
+or agent copied from a repository with no `LICENSE` file is all-rights-reserved by
+default, whatever this repository's own licence says. If you add someone else's
+agent or skill under `agents/` or `skills/`, check that its upstream licence
+permits redistribution first.
 
 ## References
 
