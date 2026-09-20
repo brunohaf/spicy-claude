@@ -3,6 +3,7 @@
 *
 
 !.gitignore
+!.gitmodules
 !README.md
 !LICENSE
 !CLAUDE.md
@@ -20,6 +21,7 @@
 !output-styles/**
 !rules/
 !rules/**
+!skills
 !skills/
 !skills/**
 
