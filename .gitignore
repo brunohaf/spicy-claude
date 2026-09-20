@@ -24,9 +24,10 @@
 !skills
 !skills/
 !skills/**
-!manbun
-!manbun/
-!manbun/**
+!plugins/
+!plugins/manbun
+!plugins/manbun/
+!plugins/manbun/**
 
 settings.local.json
 rules/personal-instructions.md
