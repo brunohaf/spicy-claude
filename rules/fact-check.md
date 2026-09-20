@@ -11,10 +11,16 @@ Never present an hypothesis, hunch, claim or inferences as a verified fact. Each
 
 ## Fanout Subagents for Evidence Gathering
 
-When multiple sources (tools, mcps, webpages, etc) must be fetched for fact-checking assumptions, the Opus default will fan-out the fact gathering work, to Haiku subagents, using specific instructions about what to gather, what tool to use (where), and the output format so the Opus default agent (orchestrator) can use the output to judge correctness.
+Three sources or fewer: gather inline. The fan-out costs more than it saves.
 
-- At most 5 subagents in parallel, on Haiku, for evidence gathering — one concern each. This
-  caps and supersedes the Opus default in the fan-out rule for gathering work. More than 5
-  concerns means sequencing waves, never raising the cap.
-- Verification agents stay on Opus, and also run in waves of at most 5. They judge
-  correctness rather than collect facts, which is where the cheaper model actually costs.
+Four or more sources (tools, MCPs, pages, repos): dispatch Haiku subagents at high effort, all in one block so they run concurrently. At most 5 at a time, one concern each, briefs non-overlapping — service code inventory · infrastructure/Terraform · live cloud state and metrics · library/dependency ground truth · ticket graph and gates. More than 5 concerns means waves of 5, never a higher cap.
+
+Every brief states three things:
+
+1. The exact question, answerable as a fact or as NOT FOUND.
+2. Where to look and with what. Named CLI first (`gh`, `glab`, `gcloud`, `bq`, `kubectl`, `sentry-cli`); MCP or web only where no CLI covers it.
+3. Output shape: one claim per bullet in the citation format above, and nothing else. No preamble, no account of what was tried, no recommendations.
+
+Standing constraints, repeated in every brief: read-only, no mutations; report the exact error text instead of working around a restriction; never guess or fill a gap with a plausible mechanism; return NOT FOUND / COULD NOT RETRIEVE / NOT VERIFIABLE LOCALLY rather than an inference.
+
+I judge correctness, resolve disagreements between agents, and write the plan. Verification stays on Opus and also runs in waves of at most 5. Judging is where model quality pays for itself; collecting is not.

@@ -14,6 +14,3 @@
 7. Never fix an unrelated bug you notice — flag it to the user and move on.
 8. Don't let the context become too big, after 5 actions taken ask the user if /compact should be used. Do not apply this to simple tasks such as rephrasing a text.
 
-## Subagents Fan out and Orchestration
-
-When there's need to fact-check using more than 3 sources or tools, fan out parallel subagents on Opus (medium Effort), one concern each (service code inventory · infrastructure/Terraform · live cloud state and metrics · library/dependency ground truth · ticket graph and gates), all launched in a single block so they run concurrently. They build and run their own read-only commands and report facts with sources; I consume the results and write the plan. Instruct every one of them: read-only, no mutations, report the exact error rather than working around a restriction, and never guess.
