@@ -100,6 +100,12 @@ That records an absolute path in `~/.claude/plugins/known_marketplaces.json`,
 which this repository does not track, so it is a per-machine convenience rather
 than a replacement for the `settings.json` entries above.
 
+It also **rewrites the `extraKnownMarketplaces` entry in `settings.json` itself**
+to a `directory` source with an absolute path. That file is tracked, so check
+`git diff settings.json` after registering a local marketplace and restore the
+`github` source before committing — the installed plugin loads from
+`~/.claude/plugins/cache/` either way, so restoring it costs nothing.
+
 Note that `.claude-plugin/marketplace.json` requires an `owner` object with a
 non-empty `name`; a manifest without it fails to parse from *any* source type,
 and the plugin then silently never loads.
