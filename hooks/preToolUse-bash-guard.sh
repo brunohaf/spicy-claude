@@ -6,7 +6,6 @@ set -euo pipefail
 payload="$(cat)"
 
 # Extract the proposed command. The tool input schema for Bash is at
-# .tool_input.command (verified 2026-04 at code.claude.com/docs/en/hooks).
 # Confirm against the official hook reference if the schema changes.
 cmd=$(printf '%s' "$payload" | jq -r '.tool_input.command // empty')
 
