@@ -22,6 +22,7 @@ swap are the CLI names in rule 1 of `CLAUDE.md` and any relevant Makefile target
 | `hooks/` | Shell hooks wired up by `settings.json` - a Bash guard and a tool-use audit log |
 | `rules/` | Task-scoped rules, loaded on demand rather than every turn |
 | `skills/` | Authored [Agent Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills) |
+| `manbun/` | The [manbun](https://github.com/brunohaf/manbun) plugin, vendored as a submodule so the pin travels with the repo |
 | `assets/` | Repository artwork referenced by this README |
 | `agents/`, `commands/`, `output-styles/` | Reserved. Empty today, but pre-named in `.gitignore` so the first file added is tracked rather than silently ignored |
 
@@ -59,6 +60,26 @@ silent content change. See **Skills submodule** under **Install**.
   databases, caches and queues; proves or refutes each candidate finding against per-pod
   budgets instead of guessing.
 
+### `manbun/`
+
+A Claude Code *plugin*, not a skill — lazy-senior-dev mode, my fork of
+[ponytail](https://github.com/DietrichGebert/ponytail). It carries its own
+`.claude-plugin/marketplace.json`, so the repository is a single-plugin
+marketplace that installs itself.
+
+The submodule is the pin and an offline copy; it is **not** what makes the
+plugin load. Claude Code loads plugins from its own marketplace clones under
+`~/.claude/plugins/`, which this repository deliberately does not track. The two
+entries in `settings.json` are the actual wiring:
+
+```json
+"extraKnownMarketplaces": { "manbun": { "source": { "source": "github", "repo": "brunohaf/manbun" } } },
+"enabledPlugins":         { "manbun@manbun": true }
+```
+
+So a fresh machine needs the settings file, not the submodule. Vendoring buys a
+known-good commit and somewhere to hack on the plugin from inside this clone.
+
 ### `agents/`
 
 Discovery here is **recursive** and identity comes from the `name:` frontmatter,
@@ -88,6 +109,9 @@ so the init has to recurse:
 git submodule update --init --recursive
 git submodule status --recursive    # every line should show a commit, not a leading -
 ```
+
+The same command pulls `manbun/`. Nothing else is needed for the plugin —
+it installs from its marketplace, not from the working tree.
 
 Then pick. Every `skills/<name>/SKILL.md` that ends up under `~/.claude/skills/`
 has its description loaded into every session, so a skill you never use still
