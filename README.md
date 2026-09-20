@@ -6,7 +6,7 @@
        width="220">
 </p>
 
-My spicy-[claude](https://claude.com/claude-code) user configuration — the authored
+My spicy-[claude](https://claude.com/claude-code) user configuration: the authored
 parts of `~/.claude`, without the session data, caches or credentials.
 
 Tuned for a Python / GKE / GitLab / Jira stack. If you fork it, the two places to
@@ -18,59 +18,59 @@ swap are the CLI names in rule 1 of `CLAUDE.md` and any relevant Makefile target
 |---|---|
 | `LICENSE` | MIT |
 | `CLAUDE.md` | Global instructions loaded into every session, in every project |
-| `settings.json` | Permissions, model, enabled plugins, marketplaces, theme. Inspired [hidekazu-konisi's article](https://hidekazu-konishi.com/entry/claude_code_harness_and_environment_engineering_guide.html)|
-| `hooks/` | Shell hooks wired up by `settings.json` - a Bash guard and a tool-use audit log |
-| `rules/` | Task-scoped rules, loaded on demand rather than every turn |
+| `settings.json` | Permissions, model, enabled plugins, marketplaces, theme. Inspired by [hidekazu-konisi's article](https://hidekazu-konishi.com/entry/claude_code_harness_and_environment_engineering_guide.html)|
+| `hooks/` | Shell hooks wired up by `settings.json`: a Bash guard and a tool-use audit log |
+| `rules/` | Task-scoped rules, read only when a task calls for them |
 | `skills/` | Authored [Agent Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills) |
 | `plugins/manbun/` | The [manbun](https://github.com/brunohaf/manbun) plugin, vendored as a submodule so the pin travels with the repo. The rest of `plugins/` is runtime state and stays ignored |
 | `assets/` | Repository artwork referenced by this README |
-| `agents/`, `commands/`, `output-styles/` | Reserved. Empty today, but pre-named in `.gitignore` so the first file added is tracked rather than silently ignored |
+| `agents/`, `commands/`, `output-styles/` | Reserved. Empty today, and pre-named in `.gitignore` so the first file added is tracked instead of silently ignored |
 
 ### `CLAUDE.md`
 
 Four sections, deliberately gated so stack-specific rules stay dormant elsewhere:
 
-- **Behavioral Principles** — always on. CLI over MCP, no unrequested remote writes,
+- Behavioral Principles: always on. CLI over MCP, no unrequested remote writes,
   cite the tool and command behind every claim, priority order for engineering calls.
-- **Problem Framing** — only when the task names a ticket, spans multiple files, or is
+- Problem Framing: only when the task names a ticket, spans multiple files, or is
   a production incident.
-- **Development Workflow** — only when the repo has a Makefile.
-- **Code Review** — a pointer to `rules/code-review.md`.
+- Development Workflow: only when the repo has a Makefile.
+- Code Review: a pointer to `rules/code-review.md`.
 
-The gating is the point. A global file is read on every turn of every project, so an
-ungated rule ("group findings by severity, end with a verdict") leaks into answers that
-have nothing to do with it.
+A global file is read on every turn of every project, so an ungated rule ("group
+findings by severity, end with a verdict") leaks into answers that have nothing to
+do with it.
 
 ### `rules/`
 
-`~/.claude/rules/` is **not** an auto-loaded path — unlike `CLAUDE.md` and a project's
-own `.claude/rules/`. Files here are reachable only because `CLAUDE.md` points at them
-by name. That is the trade: the review criteria cost one file read when reviewing, and
-zero context when not.
+`~/.claude/rules/` is not an auto-loaded path, unlike `CLAUDE.md` and a project's
+own `.claude/rules/`. Files here are reachable only because `CLAUDE.md` points at
+them by name. So the review criteria cost one file read when reviewing, and zero
+context when not.
 
 ### `skills/`
 
 Vendored as a submodule ([`brunohaf/spicy-claude-skills`](https://github.com/brunohaf/spicy-claude-skills)),
 so the pins travel with the repo and an update is a commit here rather than a
-silent content change. See **Skills submodule** under **Install**.
+silent content change. See "Skills submodule" under Install.
 
-- **`humanizer`** — rewrites AI-sounding prose without changing what it says.
-- **`performance-safeguard`** — self-review of your own branch for performance and
-  scalability risk before opening an MR. Built for distributed Kubernetes services with
-  databases, caches and queues; proves or refutes each candidate finding against per-pod
-  budgets instead of guessing.
+- `humanizer`: rewrites AI-sounding prose without changing what it says.
+- `performance-safeguard`: self-review of your own branch for performance and
+  scalability risk before opening an MR. Built for distributed Kubernetes services
+  with databases, caches and queues; it proves or refutes each candidate finding
+  against per-pod budgets instead of guessing.
 
 ### `plugins/manbun/`
 
-A Claude Code *plugin*, not a skill — lazy-senior-dev mode, my fork of
+A Claude Code *plugin*, not a skill: lazy-senior-dev mode, my fork of
 [ponytail](https://github.com/DietrichGebert/ponytail). It carries its own
 `.claude-plugin/marketplace.json`, so the repository is a single-plugin
 marketplace that installs itself.
 
-It lives under `plugins/` because that is where Claude Code keeps plugins — but
-everything else in that directory is runtime state (`cache/`, `marketplaces/`,
-`installed_plugins.json`) and stays ignored. The allowlist opens `plugins/` for
-traversal and re-includes exactly one child:
+It lives under `plugins/` because that is where Claude Code keeps plugins.
+Everything else in that directory is runtime state (`cache/`, `marketplaces/`,
+`installed_plugins.json`) and stays ignored, so the allowlist opens `plugins/`
+for traversal and re-includes exactly one child:
 
 ```gitignore
 !plugins/
@@ -79,9 +79,9 @@ traversal and re-includes exactly one child:
 !plugins/manbun/**
 ```
 
-The submodule is the pin and an offline copy; it is **not** what makes the
-plugin load. Claude Code loads plugins from its own cache under
-`~/.claude/plugins/cache/`. The two entries in `settings.json` are the wiring
+The submodule is the pin and an offline copy; it is not what makes the plugin
+load. Claude Code loads plugins from its own cache under
+`~/.claude/plugins/cache/`, and the two entries in `settings.json` are the wiring
 that travels:
 
 ```json
@@ -90,7 +90,7 @@ that travels:
 ```
 
 A local checkout can be registered instead, which is what makes vendoring worth
-the submodule — edits to the working tree become the installed plugin:
+the submodule: edits to the working tree become the installed plugin.
 
 ```bash
 claude plugin marketplace add ./plugins/manbun    # source type: directory
@@ -100,26 +100,26 @@ That records an absolute path in `~/.claude/plugins/known_marketplaces.json`,
 which this repository does not track, so it is a per-machine convenience rather
 than a replacement for the `settings.json` entries above.
 
-It also **rewrites the `extraKnownMarketplaces` entry in `settings.json` itself**
-to a `directory` source with an absolute path. That file is tracked, so check
+It also rewrites the `extraKnownMarketplaces` entry in `settings.json` itself to
+a `directory` source with an absolute path. That file is tracked, so check
 `git diff settings.json` after registering a local marketplace and restore the
-`github` source before committing — the installed plugin loads from
+`github` source before committing. The installed plugin loads from
 `~/.claude/plugins/cache/` either way, so restoring it costs nothing.
 
-Note that `.claude-plugin/marketplace.json` requires an `owner` object with a
-non-empty `name`; a manifest without it fails to parse from *any* source type,
-and the plugin then silently never loads.
+`.claude-plugin/marketplace.json` requires an `owner` object with a non-empty
+`name`. A manifest without it fails to parse from *any* source type, and the
+plugin then silently never loads.
 
 ### `agents/`
 
-Discovery here is **recursive** and identity comes from the `name:` frontmatter,
-not the path — unlike `skills/`, which is pinned to exactly
+Discovery here is recursive, and identity comes from the `name:` frontmatter
+rather than the path. `skills/` is the opposite: pinned to exactly
 `skills/<name>/SKILL.md`, one level deep. So agents can be foldered freely;
 skills cannot.
 
-The directory ships empty. It is pre-named in `.gitignore` so the first agent
-added is tracked rather than silently ignored. Anything vendored in here needs a
-licence upstream that permits redistribution — see **License** below.
+The directory ships empty, pre-named in `.gitignore` so the first agent added is
+tracked instead of silently ignored. Anything vendored in here needs an upstream
+licence that permits redistribution; see License below.
 
 ## Install
 
@@ -140,12 +140,12 @@ git submodule update --init --recursive
 git submodule status --recursive    # every line should show a commit, not a leading -
 ```
 
-The same command pulls `plugins/manbun/`. Nothing else is needed for the plugin
-— it installs from its marketplace, not from the working tree.
+The same command pulls `plugins/manbun/`. Nothing else is needed for the plugin,
+which installs from its marketplace rather than the working tree.
 
-Then pick. Every `skills/<name>/SKILL.md` that ends up under `~/.claude/skills/`
-has its description loaded into every session, so a skill you never use still
-costs context. Vendor the whole submodule, link only the ones you want:
+Every `skills/<name>/SKILL.md` that ends up under `~/.claude/skills/` has its
+description loaded into every session, so a skill you never use still costs
+context. Vendor the whole submodule and link only the ones you want:
 
 ```powershell
 cmd /c mklink /J "$env:USERPROFILE\.claude\skills\performance-safeguard" "$PWD\skills\performance-safeguard"
@@ -155,12 +155,12 @@ cmd /c mklink /J "$env:USERPROFILE\.claude\skills\performance-safeguard" "$PWD\s
 ln -s "$PWD/skills/performance-safeguard" ~/.claude/skills/performance-safeguard
 ```
 
-Skills Claude Code syncs down itself live in `~/.claude/skills/synced/`. Link
-per skill rather than linking `skills/` whole, or the junction hides them.
+Skills Claude Code syncs down itself live in `~/.claude/skills/synced/`. Link per
+skill; a junction over `skills/` as a whole hides them.
 
 ### In place
 
-The repo *is* `~/.claude`, so initialise rather than cloning over it:
+The repo *is* `~/.claude`, so initialise in place instead of cloning over it:
 
 ```bash
 cd ~/.claude
@@ -172,10 +172,10 @@ git status
 
 ### `CLAUDE_CONFIG_DIR`
 
-Point Claude Code at the clone, wherever it lives. The variable relocates
-the whole configuration directory — settings, session history and plugins all
-move with it — which is why `.gitignore` here is an allowlist: the session state
-lands inside the working tree and stays ignored until a path is named.
+Point Claude Code at the clone, wherever it lives. The variable relocates the
+whole configuration directory (settings, session history and plugins all move
+with it), which is why `.gitignore` here is an allowlist: the session state lands
+inside the working tree and stays ignored until a path is named.
 
 ```bash
 export CLAUDE_CONFIG_DIR="$HOME/src/claude-config"    # ~/.bashrc, ~/.zshrc
@@ -187,23 +187,23 @@ export CLAUDE_CONFIG_DIR="$HOME/src/claude-config"    # ~/.bashrc, ~/.zshrc
 
 Hook commands in `settings.json` are written as
 `"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/..."` so they follow the clone instead
-of pointing at a `~/.claude` that may no longer hold them - a hardcoded path fails
+of pointing at a `~/.claude` that may no longer hold them. A hardcoded path fails
 *silently* here, the same way a missing submodule would.
 
-Verify with `/context` in a new session: `CLAUDE.md` should appear under **Memory
-files**. One caveat — the relocation is total, so a machine that already had a
-populated `~/.claude` starts fresh on history and plugins; the authored config is
-the only part the repository carries.
+Verify with `/context` in a new session: `CLAUDE.md` should appear under Memory
+files. The relocation is total, so a machine that already had a populated
+`~/.claude` starts fresh on history and plugins; the authored config is the only
+part the repository carries.
 
 ### Symlinks
 
 Leave the clone where it is and link its components into `~/.claude`. The repo
 becomes the source of truth for the authored config, while the session state
 Claude Code writes next to it (`projects/`, `sessions/`, `plugins/`,
-`skills/synced/`) stays on the local disk instead of moving with the clone, which
-is what `CLAUDE_CONFIG_DIR` would do.
+`skills/synced/`) stays on the local disk instead of moving with the clone, as it
+would under `CLAUDE_CONFIG_DIR`.
 
-Link exactly the paths `.gitignore` allows - `CLAUDE.md`, `settings.json`,
+Link exactly the paths `.gitignore` allows: `CLAUDE.md`, `settings.json`,
 `README.md`, `.gitignore`, `hooks/`, `rules/`, and the skills you picked above.
 
 ```bash
@@ -229,7 +229,7 @@ Set-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\settings.json" -Target "$PWD\settings.json"
 ```
 
-Move the originals aside before linking - `settings.json` in particular, since the
+Move the originals aside before linking, `settings.json` in particular, since the
 repo's copy replaces the permissions, plugins and hooks the machine was running.
 Verify with `Get-ChildItem ~\.claude -Force | Where-Object LinkType` on Windows or
 `ls -l ~/.claude` elsewhere, then check `/context` in a new session.
@@ -243,8 +243,9 @@ Session and machine state, all of it either private or regenerable:
 clones and caches), `security/`, `cache/`, `shell-snapshots/`,
 `daemon/`, `downloads/`, `ide/`.
 
-`.gitignore` is an allowlist — `*` first, then explicit `!` re-includes — so anything a
-future Claude Code release adds is ignored until it is named. Verify before a first push:
+`.gitignore` is an allowlist (`*` first, then explicit `!` re-includes), so anything
+a future Claude Code release adds is ignored until it is named. Verify before a
+first push:
 
 ```bash
 git add -A && git status --porcelain -uall
@@ -252,11 +253,11 @@ git add -A && git status --porcelain -uall
 
 ## License
 
-[MIT](LICENSE). The repository carries only authored content — instructions, hooks,
+[MIT](LICENSE). The repository carries only authored content: instructions, hooks,
 skills and settings written here.
 
 Third-party material is deliberately *not* vendored. The projects under
-**References** are credited as influences and reading, not redistributed: a prompt
+References are credited as influences and reading, not redistributed: a prompt
 or agent copied from a repository with no `LICENSE` file is all-rights-reserved by
 default, whatever this repository's own licence says. If you add someone else's
 agent or skill under `agents/` or `skills/`, check that its upstream licence

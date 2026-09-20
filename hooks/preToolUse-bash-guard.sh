@@ -1,25 +1,25 @@
 #!/usr/bin/env bash
-# hooks/preToolUse-bash-guard.sh - resolved via $CLAUDE_CONFIG_DIR, default ~/.claude
-# Reads the proposed tool invocation as JSON on stdin.
+# Blocks destructive Bash invocations. Reads the proposed tool call as JSON on
+# stdin; path resolved via $CLAUDE_CONFIG_DIR, default ~/.claude.
 
 set -euo pipefail
 payload="$(cat)"
 
-# Extract the proposed command. The tool input schema for Bash is at
-# Confirm against the official hook reference if the schema changes.
+# Confirm .tool_input.command against the official hook reference if the schema changes.
 cmd=$(printf '%s' "$payload" | jq -r '.tool_input.command // empty')
 
 if [[ -z "$cmd" ]]; then
   exit 0  # not a Bash tool call; nothing to do
 fi
 
-# A regex-based denylist that catches shapes a literal pattern cannot.
+# Regexes, so they catch spacing and flag-order variants the literal Bash(...)
+# deny rules in settings.json miss.
 deny_patterns=(
-  'rm[[:space:]]+-rf?[[:space:]]+/'      # rm -rf / or variants
+  'rm[[:space:]]+-rf?[[:space:]]+/'      # rm -rf /
   'rm[[:space:]]+-rf?[[:space:]]+~'      # rm -rf ~
   'rm[[:space:]]+-rf?[[:space:]]+\$HOME' # rm -rf $HOME
-  ':(){.*};:'                            # classic fork bomb
-  'mkfs\.'                               # any mkfs.* invocation
+  ':(){.*};:'                            # fork bomb
+  'mkfs\.'
   'dd[[:space:]]+if=.*of=/dev/'          # dd to a raw device
 )
 
