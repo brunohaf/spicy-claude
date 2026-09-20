@@ -1,3 +1,6 @@
 [submodule "skills"]
 	path = skills
 	url = https://github.com/brunohaf/spicy-claude-skills.git
+[submodule "manbun"]
+	path = manbun
+	url = https://github.com/brunohaf/manbun.git
