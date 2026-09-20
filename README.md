@@ -22,7 +22,7 @@ swap are the CLI names in rule 1 of `CLAUDE.md` and any relevant Makefile target
 | `hooks/` | Shell hooks wired up by `settings.json` - a Bash guard and a tool-use audit log |
 | `rules/` | Task-scoped rules, loaded on demand rather than every turn |
 | `skills/` | Authored [Agent Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills) |
-| `manbun/` | The [manbun](https://github.com/brunohaf/manbun) plugin, vendored as a submodule so the pin travels with the repo |
+| `plugins/manbun/` | The [manbun](https://github.com/brunohaf/manbun) plugin, vendored as a submodule so the pin travels with the repo. The rest of `plugins/` is runtime state and stays ignored |
 | `assets/` | Repository artwork referenced by this README |
 | `agents/`, `commands/`, `output-styles/` | Reserved. Empty today, but pre-named in `.gitignore` so the first file added is tracked rather than silently ignored |
 
@@ -60,25 +60,49 @@ silent content change. See **Skills submodule** under **Install**.
   databases, caches and queues; proves or refutes each candidate finding against per-pod
   budgets instead of guessing.
 
-### `manbun/`
+### `plugins/manbun/`
 
 A Claude Code *plugin*, not a skill — lazy-senior-dev mode, my fork of
 [ponytail](https://github.com/DietrichGebert/ponytail). It carries its own
 `.claude-plugin/marketplace.json`, so the repository is a single-plugin
 marketplace that installs itself.
 
+It lives under `plugins/` because that is where Claude Code keeps plugins — but
+everything else in that directory is runtime state (`cache/`, `marketplaces/`,
+`installed_plugins.json`) and stays ignored. The allowlist opens `plugins/` for
+traversal and re-includes exactly one child:
+
+```gitignore
+!plugins/
+!plugins/manbun
+!plugins/manbun/
+!plugins/manbun/**
+```
+
 The submodule is the pin and an offline copy; it is **not** what makes the
-plugin load. Claude Code loads plugins from its own marketplace clones under
-`~/.claude/plugins/`, which this repository deliberately does not track. The two
-entries in `settings.json` are the actual wiring:
+plugin load. Claude Code loads plugins from its own cache under
+`~/.claude/plugins/cache/`. The two entries in `settings.json` are the wiring
+that travels:
 
 ```json
 "extraKnownMarketplaces": { "manbun": { "source": { "source": "github", "repo": "brunohaf/manbun" } } },
 "enabledPlugins":         { "manbun@manbun": true }
 ```
 
-So a fresh machine needs the settings file, not the submodule. Vendoring buys a
-known-good commit and somewhere to hack on the plugin from inside this clone.
+A local checkout can be registered instead, which is what makes vendoring worth
+the submodule — edits to the working tree become the installed plugin:
+
+```bash
+claude plugin marketplace add ./plugins/manbun    # source type: directory
+```
+
+That records an absolute path in `~/.claude/plugins/known_marketplaces.json`,
+which this repository does not track, so it is a per-machine convenience rather
+than a replacement for the `settings.json` entries above.
+
+Note that `.claude-plugin/marketplace.json` requires an `owner` object with a
+non-empty `name`; a manifest without it fails to parse from *any* source type,
+and the plugin then silently never loads.
 
 ### `agents/`
 
@@ -110,8 +134,8 @@ git submodule update --init --recursive
 git submodule status --recursive    # every line should show a commit, not a leading -
 ```
 
-The same command pulls `manbun/`. Nothing else is needed for the plugin —
-it installs from its marketplace, not from the working tree.
+The same command pulls `plugins/manbun/`. Nothing else is needed for the plugin
+— it installs from its marketplace, not from the working tree.
 
 Then pick. Every `skills/<name>/SKILL.md` that ends up under `~/.claude/skills/`
 has its description loaded into every session, so a skill you never use still
@@ -209,7 +233,8 @@ Verify with `Get-ChildItem ~\.claude -Force | Where-Object LinkType` on Windows 
 Session and machine state, all of it either private or regenerable:
 `.credentials.json`, `projects/` (full conversation transcripts), `history.jsonl`,
 `plans/`, `file-history/`, `backups/`, `sessions/`, `jobs/`, `tasks/`, `session-env/`,
-`plugins/` (clones of public marketplaces), `security/`, `cache/`, `shell-snapshots/`,
+`plugins/` except the tracked `plugins/manbun` submodule (the rest is marketplace
+clones and caches), `security/`, `cache/`, `shell-snapshots/`,
 `daemon/`, `downloads/`, `ide/`.
 
 `.gitignore` is an allowlist — `*` first, then explicit `!` re-includes — so anything a
