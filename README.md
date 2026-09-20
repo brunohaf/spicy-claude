@@ -49,6 +49,11 @@ zero context when not.
 
 ### `skills/`
 
+Vendored as a submodule ([`brunohaf/spicy-claude-skills`](https://github.com/brunohaf/spicy-claude-skills)),
+so the pins travel with the repo and an update is a commit here rather than a
+silent content change. See **Skills submodule** under **Install**.
+
+- **`humanizer`** — rewrites AI-sounding prose without changing what it says.
 - **`performance-safeguard`** — self-review of your own branch for performance and
   scalability risk before opening an MR. Built for distributed Kubernetes services with
   databases, caches and queues; proves or refutes each candidate finding against per-pod
@@ -67,9 +72,37 @@ licence upstream that permits redistribution — see **License** below.
 
 ## Install
 
-Two ways to get the repository's contents to where Claude Code reads them: make
-the clone *be* `~/.claude`, or keep it anywhere and point `CLAUDE_CONFIG_DIR` at
-it. Neither needs symlinks, so both work on Windows without Developer Mode.
+Three ways to get the repository's contents to where Claude Code reads them:
+make the clone *be* `~/.claude`, keep it anywhere and point `CLAUDE_CONFIG_DIR`
+at it, or leave it where it is and link the parts you want into `~/.claude`. The
+first two need no links, so they work on Windows without Developer Mode.
+
+Whichever you pick, pull the skills first.
+
+### Skills submodule
+
+`skills/` is a submodule, and the skills inside it can be submodules of their own,
+so the init has to recurse:
+
+```bash
+git submodule update --init --recursive
+git submodule status --recursive    # every line should show a commit, not a leading -
+```
+
+Then pick. Every `skills/<name>/SKILL.md` that ends up under `~/.claude/skills/`
+has its description loaded into every session, so a skill you never use still
+costs context. Vendor the whole submodule, link only the ones you want:
+
+```powershell
+cmd /c mklink /J "$env:USERPROFILE\.claude\skills\performance-safeguard" "$PWD\skills\performance-safeguard"
+```
+
+```bash
+ln -s "$PWD/skills/performance-safeguard" ~/.claude/skills/performance-safeguard
+```
+
+Skills Claude Code syncs down itself live in `~/.claude/skills/synced/`. Link
+per skill rather than linking `skills/` whole, or the junction hides them.
 
 ### In place
 
@@ -107,6 +140,45 @@ Verify with `/context` in a new session: `CLAUDE.md` should appear under **Memor
 files**. One caveat — the relocation is total, so a machine that already had a
 populated `~/.claude` starts fresh on history and plugins; the authored config is
 the only part the repository carries.
+
+### Symlinks
+
+Leave the clone where it is and link its components into `~/.claude`. The repo
+becomes the source of truth for the authored config, while the session state
+Claude Code writes next to it (`projects/`, `sessions/`, `plugins/`,
+`skills/synced/`) stays on the local disk instead of moving with the clone, which
+is what `CLAUDE_CONFIG_DIR` would do.
+
+Link exactly the paths `.gitignore` allows - `CLAUDE.md`, `settings.json`,
+`README.md`, `.gitignore`, `hooks/`, `rules/`, and the skills you picked above.
+
+```bash
+repo="$PWD"
+for p in CLAUDE.md settings.json README.md .gitignore hooks rules; do
+  ln -s "$repo/$p" ~/.claude/"$p"
+done
+```
+
+On Windows the two link types differ in what they cost. A directory junction
+needs no privilege:
+
+```powershell
+cmd /c mklink /J "$env:USERPROFILE\.claude\rules" "$PWD\rules"
+```
+
+A file symlink needs Developer Mode or an elevated shell, and a hardlink is not a
+substitute when the clone and `~/.claude` sit on different drives:
+
+```powershell
+# once, elevated
+Set-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock' AllowDevelopmentWithoutDevLicense 1 -Type DWord
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\settings.json" -Target "$PWD\settings.json"
+```
+
+Move the originals aside before linking - `settings.json` in particular, since the
+repo's copy replaces the permissions, plugins and hooks the machine was running.
+Verify with `Get-ChildItem ~\.claude -Force | Where-Object LinkType` on Windows or
+`ls -l ~/.claude` elsewhere, then check `/context` in a new session.
 
 ## What is deliberately not here
 
