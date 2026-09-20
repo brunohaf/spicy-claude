@@ -41,13 +41,20 @@
     "learning-output-style@claude-plugins-official": true,
     "mcp-server-dev@claude-plugins-official": true,
     "mcp-apps@claude-plugins-official": true,
-    "academy-guide@anthropic-agent-skills": true
+    "academy-guide@anthropic-agent-skills": true,
+    "manbun@manbun": true
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {
       "source": {
         "source": "github",
         "repo": "anthropics/skills"
+      }
+    },
+    "manbun": {
+      "source": {
+        "source": "github",
+        "repo": "brunohaf/manbun"
       }
     }
   },
