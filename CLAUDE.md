@@ -1,45 +1,19 @@
 # Behavioral Principles
 
-1. **Never use MCP when a CLI exists for the same system.** Preferred CLIs: GitLab `glab`,
-   GCP `gcloud`/`bq`, Sentry `sentry-cli`, GitHub `gh`, Kubernetes `kubectl`.
-   MCP is the fallback only when no CLI covers the operation.
-2. **No remote writes without an explicit request** — no push, deploy, ticket transition,
+1. Use tools that provides the most concise response contained the desired information (for saving tokens). Avoid use MCP when a CLI exists for the same system. MCP or webscraping are fallbacks only when no CLI covers the operation.
+2. No remote writes without an explicit request — no push, deploy, ticket transition,
    or write to any shared system unless I ask for it in that turn.
-3. **Fact-check every hypothesis with a tool, and cite the tool + exact command in the answer.**
-   Never present an inference as a verified fact.
-4. **Engineer at staff level.** My primary stack is Python on a data-intensive distributed system
+3. Load project rules before acting: `CLAUDE.local.md` and `.claude/rules/`.  On conflict, the more specific file wins.
+4. Engineer at staff level. My primary stack is Python on a data-intensive distributed system
    (Kubernetes, queues, cache, CDN, VPC, databases). Priorities in order:
    correctness → fail-safety → performance → backwards compatibility.
    Never break a public interface or schema without stating the migration path.
    In a repo of another language, hold the same bar in that language's idioms.
-5. **Answer with the Minto pyramid**: conclusion first, then the support.
-6. **Load project rules before acting**: `CLAUDE.local.md` and `.claude/rules/`.
-   On conflict, the more specific file wins.
-7. **Never fix an unrelated bug you notice — flag it and move on.**
+5. Fact-check with tools; attach the source to every fact.. Use `./claude/rules/fact-check.md` to extend this rule.
+6. When the user requests to update the instructions, behaviour or CLAUDE.md include the new instructions to `.claude/rules/personal-instructions.md`. Create the file it's missing.
+7. Never fix an unrelated bug you notice — flag it to the user and move on.
+8. Don't let the context become too big, after 5 actions taken ask the user if /compact should be used. Do not apply this to simple tasks such as rephrasing a text.
 
-# Problem Framing
+## Subagents Fan out and Orchestration
 
-Apply when the task names a ticket, spans multiple files, or is a production incident.
-Skip for one-off questions and local edits.
-
-1. Pull the Jira card; read acceptance criteria, linked epics, and prior related work.
-2. Check Notion, Sentry, New Relic, GCP and GitLab for related signal — CLI first (rule 1).
-3. State the problem back in plain words, with gaps and risks called out.
-4. Say how to verify locally, and what a safe staging → production rollout looks like.
-
-# Development Workflow
-
-Applies when the repo has a Makefile. Otherwise use the README's own commands and say which you chose.
-
-1. Read the README.
-2. Setup: create `.envrc` per README → `direnv allow` → `make deps-compile` → `make deps-install`
-3. Make the change.
-4. Typecheck: `make check`
-5. Test: `make tests`
-6. Lint: `make lint` — fix and re-run until clean.
-7. Pre-delivery: report what passed and what failed, verbatim.
-   Never claim green on a suite you did not run.
-
-# Code Review
-
-When reviewing a diff, branch or MR, follow `~/.claude/rules/code-review.md`.
+When there's need to fact-check using more than 3 sources or tools, fan out parallel subagents on Opus (medium Effort), one concern each (service code inventory · infrastructure/Terraform · live cloud state and metrics · library/dependency ground truth · ticket graph and gates), all launched in a single block so they run concurrently. They build and run their own read-only commands and report facts with sources; I consume the results and write the plan. Instruct every one of them: read-only, no mutations, report the exact error rather than working around a restriction, and never guess.
