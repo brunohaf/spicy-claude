@@ -22,7 +22,7 @@ swap are the CLI names in rule 1 of `CLAUDE.md` and any relevant Makefile target
 | `hooks/` | Shell hooks wired up by `settings.json`: a Bash guard and a tool-use audit log |
 | `rules/` | Task-scoped rules, read only when a task calls for them |
 | `skills/` | Authored [Agent Skills](https://docs.claude.com/en/docs/agents-and-tools/agent-skills) |
-| `plugins/manbun/` | The [manbun](https://github.com/brunohaf/manbun) plugin, vendored as a submodule so the pin travels with the repo. The rest of `plugins/` is runtime state and stays ignored |
+| `plugins/` | Plugins as submodules so the pin travels with the repo. The rest of `plugins/` is runtime state and stays ignored |
 | `assets/` | Repository artwork referenced by this README |
 | `agents/`, `commands/`, `output-styles/` | Reserved. Empty today, and pre-named in `.gitignore` so the first file added is tracked instead of silently ignored |
 
@@ -50,21 +50,11 @@ context when not.
 
 ### `skills/`
 
-Vendored as a submodule ([`brunohaf/spicy-claude-skills`](https://github.com/brunohaf/spicy-claude-skills)),
-so the pins travel with the repo and an update is a commit here rather than a
-silent content change. See "Skills submodule" under Install.
-
-- `humanizer`: rewrites AI-sounding prose without changing what it says.
-- `performance-safeguard`: self-review of your own branch for performance and
-  scalability risk before opening an MR. Built for distributed Kubernetes services
-  with databases, caches and queues; it proves or refutes each candidate finding
-  against per-pod budgets instead of guessing.
+Made to work with skills submodules, so the pins travel with the repo and an update is a commit here rather than a silent content change. See "Skills submodule" under Install.
 
 ### `plugins/manbun/`
 
-A Claude Code *plugin*, not a skill: lazy-senior-dev mode, my fork of
-[ponytail](https://github.com/DietrichGebert/ponytail). It carries its own
-`.claude-plugin/marketplace.json`, so the repository is a single-plugin
+A Claude Code *plugin*, not a skill: lazy-senior-dev mode, my fork of [ponytail](https://github.com/DietrichGebert/ponytail) (private for now). It carries its own `.claude-plugin/marketplace.json`, so the repository is a single-plugin
 marketplace that installs itself.
 
 It lives under `plugins/` because that is where Claude Code keeps plugins.
@@ -239,8 +229,7 @@ Verify with `Get-ChildItem ~\.claude -Force | Where-Object LinkType` on Windows 
 Session and machine state, all of it either private or regenerable:
 `.credentials.json`, `projects/` (full conversation transcripts), `history.jsonl`,
 `plans/`, `file-history/`, `backups/`, `sessions/`, `jobs/`, `tasks/`, `session-env/`,
-`plugins/` except the tracked `plugins/manbun` submodule (the rest is marketplace
-clones and caches), `security/`, `cache/`, `shell-snapshots/`,
+`plugins/`, `security/`, `cache/`, `shell-snapshots/`,
 `daemon/`, `downloads/`, `ide/`.
 
 `.gitignore` is an allowlist (`*` first, then explicit `!` re-includes), so anything
